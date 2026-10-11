@@ -1,0 +1,75 @@
+name: Update Fort Formula
+
+on:
+  repository_dispatch:
+    types: [fort_release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Fort release tag (for example v1.0.7)
+        required: true
+        type: string
+      checksums_url:
+        description: Optional checksums URL override
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve inputs
+        id: resolve
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          version="${{ github.event.client_payload.version }}"
+          checksums_url="${{ github.event.client_payload.checksums_url }}"
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            version="${{ inputs.version }}"
+            checksums_url="${{ inputs.checksums_url }}"
+          fi
+
+          if [[ -z "${version}" ]]; then
+            echo "Missing release version" >&2
+            exit 1
+          fi
+
+          if [[ -z "${checksums_url}" ]]; then
+            checksums_url="https://github.com/Aureuma/fort/releases/download/${version}/checksums.txt"
+          fi
+
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "checksums_url=${checksums_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Update formula
+        shell: bash
+        run: |
+          set -euo pipefail
+          scripts/update-formula.sh \
+            --version "${{ steps.resolve.outputs.version }}" \
+            --checksums "${{ steps.resolve.outputs.checksums_url }}"
+
+      - name: Commit changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          IFS=. read -r major minor patch < VERSION
+          printf '%s.%s.%s\n' "$major" "$minor" "$((patch + 1))" > VERSION
+          git add Formula/fort.rb VERSION
+          if git diff --cached --quiet; then
+            echo "No formula changes"
+            exit 0
+          fi
+          git commit -m "chore: update fort formula to ${{ steps.resolve.outputs.version }}"
+          git push

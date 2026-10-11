@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  formula-sanity:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate formula syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '^class Fort < Formula' Formula/fort.rb
+          grep -q 'test do' Formula/fort.rb
+
+      - name: Ensure update script is executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -x scripts/update-formula.sh
+
+  install-smoke:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Tap and install fort with Homebrew
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew untap aureuma/fort >/dev/null 2>&1 || true
+          brew tap aureuma/fort "${GITHUB_WORKSPACE}"
+          brew install aureuma/fort/fort
+          fort version
