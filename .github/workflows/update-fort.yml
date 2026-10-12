@@ -50,13 +50,31 @@ jobs:
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "checksums_url=${checksums_url}" >> "$GITHUB_OUTPUT"
 
+      - name: Checkout fort release tooling
+        uses: actions/checkout@v4
+        with:
+          repository: Aureuma/fort
+          ref: ${{ steps.resolve.outputs.version }}
+          path: fort-src
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@1.94.0
+
       - name: Update formula
         shell: bash
         run: |
           set -euo pipefail
-          scripts/update-formula.sh \
-            --version "${{ steps.resolve.outputs.version }}" \
-            --checksums "${{ steps.resolve.outputs.checksums_url }}"
+          if [[ -f fort-src/src/bin/fort-release.rs ]]; then
+            (cd fort-src && cargo run --quiet --jobs 2 --locked --release --bin fort-release -- homebrew render-tap-formula \
+              --version "${{ steps.resolve.outputs.version }}" \
+              --checksums "${{ steps.resolve.outputs.checksums_url }}" \
+              --tap-dir "${GITHUB_WORKSPACE}")
+          else
+            echo "fort-release not present at ${{ steps.resolve.outputs.version }}; using the legacy shell renderer."
+            scripts/update-formula.sh \
+              --version "${{ steps.resolve.outputs.version }}" \
+              --checksums "${{ steps.resolve.outputs.checksums_url }}"
+          fi
 
       - name: Commit changes
         shell: bash
@@ -64,8 +82,10 @@ jobs:
           set -euo pipefail
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          IFS=. read -r major minor patch < VERSION
-          printf '%s.%s.%s\n' "$major" "$minor" "$((patch + 1))" > VERSION
+          if [[ ! -f fort-src/src/bin/fort-release.rs ]]; then
+            IFS=. read -r major minor patch < VERSION
+            printf '%s.%s.%s\n' "$major" "$minor" "$((patch + 1))" > VERSION
+          fi
           git add Formula/fort.rb VERSION
           if git diff --cached --quiet; then
             echo "No formula changes"
