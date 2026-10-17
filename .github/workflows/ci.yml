@@ -19,6 +19,7 @@ jobs:
           set -euo pipefail
           grep -q '^class Fort < Formula' Formula/fort.rb
           grep -q 'test do' Formula/fort.rb
+          grep -q '"fort", "fortd", "fort-agent"' Formula/fort.rb
 
       - name: Ensure update script is executable
         shell: bash
@@ -40,3 +41,7 @@ jobs:
           brew tap aureuma/fort "${GITHUB_WORKSPACE}"
           brew install aureuma/fort/fort
           fort version
+          command -v fortd
+          command -v fort-agent
+          fortd --help | grep -q "Usage:"
+          fort-agent --help | grep -q "Usage:"

@@ -115,17 +115,21 @@ class Fort < Formula
     stage.mkpath
     system "tar", "-xzf", cached_download, "-C", stage
 
-    binary = Dir["#{stage}/fort_*/fort"].first
-    binary = (stage/"fort").to_s if binary.nil? && (stage/"fort").exist?
-    raise "fort binary not found in release archive" if binary.nil? || binary.empty?
+    ["fort", "fortd", "fort-agent"].each do |name|
+      binary = Dir["#{stage}/fort_*/#{name}"].first
+      binary = (stage/name).to_s if binary.nil? && (stage/name).exist?
+      raise "#{name} binary not found in release archive" if binary.nil? || binary.empty?
 
-    bin.install binary => "fort"
-    chmod 0o755, bin/"fort"
+      bin.install binary => name
+      chmod 0o755, bin/name
+    end
   end
 
   test do
     output = shell_output("#{bin}/fort version")
     assert_match version.to_s, output
+    assert_predicate bin/"fortd", :executable?, "fortd was not installed"
+    assert_predicate bin/"fort-agent", :executable?, "fort-agent was not installed"
   end
 end
 RUBY
