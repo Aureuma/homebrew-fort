@@ -1,26 +1,26 @@
 class Fort < Formula
   desc "Policy and authentication API for Vault secret operations"
   homepage "https://github.com/Aureuma/fort"
-  version "1.1.0"
+  version "1.2.0"
   license "AGPL-3.0-only"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/Aureuma/fort/releases/download/v1.1.0/fort_1.1.0_darwin_arm64.tar.gz"
-      sha256 "265a5340b948dea7ee359a2df45231073e1b78fafc5f3114bb22d7c3735f6f25"
+      url "https://github.com/Aureuma/fort/releases/download/v1.2.0/fort_1.2.0_darwin_arm64.tar.gz"
+      sha256 "6b98f5bf2d0523df50b9532bd75c234b1f151acce7c39cde491c2a8360e833af"
     else
-      url "https://github.com/Aureuma/fort/releases/download/v1.1.0/fort_1.1.0_darwin_amd64.tar.gz"
-      sha256 "ee9497844c4bfa34c28c81afbd24d8a28b6c5311dc72a2204f504529077a3442"
+      url "https://github.com/Aureuma/fort/releases/download/v1.2.0/fort_1.2.0_darwin_amd64.tar.gz"
+      sha256 "3e08b915998131b733c9f2c1b6a6bab5eb421a6eb859f6330c26a1a92f001b8a"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/Aureuma/fort/releases/download/v1.1.0/fort_1.1.0_linux_arm64.tar.gz"
-      sha256 "ee1ba18911fe23e5237a0eae62d8eb52bdc2bed85e952b1a29b1dd599d1960bd"
+      url "https://github.com/Aureuma/fort/releases/download/v1.2.0/fort_1.2.0_linux_arm64.tar.gz"
+      sha256 "1137f73a8f1a5d3acbfadc4066f75b1f7bf0d98daf37bd68752f6e9945373cb0"
     elsif Hardware::CPU.intel?
-      url "https://github.com/Aureuma/fort/releases/download/v1.1.0/fort_1.1.0_linux_amd64.tar.gz"
-      sha256 "61a778643cc9749e1b117af0c8634a68dbb379ee75600586abaea1d8d69055a4"
+      url "https://github.com/Aureuma/fort/releases/download/v1.2.0/fort_1.2.0_linux_amd64.tar.gz"
+      sha256 "84c3a0b89958246f5739cd53b44a0b63a5ccf8d2314c217b177b5d550affa97b"
     end
   end
 
