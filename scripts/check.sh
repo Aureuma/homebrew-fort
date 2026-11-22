@@ -55,22 +55,15 @@ pass "checksum verify (${verified}/4 assets, ${tag})"
 
 # --- 4. brew audit (isolated temp tap, leaves user taps untouched) ---
 tap="fortcheck/local"
-tap_repo="$(brew --repo "${tap}" 2>/dev/null || true)"
-if [[ -z "${tap_repo}" ]]; then
-  brew tap-new "${tap}" >/dev/null \
-    || die "could not create temporary tap ${tap}"
-  tap_repo="$(brew --repo "${tap}")"
-  created_tap="yes"
-else
-  created_tap="no"
+if brew tap 2>/dev/null | grep -qx "${tap}"; then
+  die "temporary tap name ${tap} is already in use; remove it first"
 fi
+tap_repo="$(brew --repo "${tap}")"
+brew tap-new "${tap}" >/dev/null \
+  || die "could not create temporary tap ${tap}"
 cleanup() {
   rm -f "${checksums_file}"
-  if [[ "${created_tap:-no}" == "yes" ]]; then
-    brew untap "${tap}" >/dev/null 2>&1 || true
-  else
-    rm -f "${tap_repo}/Formula/fort.rb"
-  fi
+  brew untap "${tap}" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 mkdir -p "${tap_repo}/Formula"
