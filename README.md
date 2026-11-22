@@ -36,12 +36,26 @@ fort doctor
 - macOS: Apple Silicon (`arm64`), Intel (`amd64`)
 - Linux: `arm64`, `amd64`
 
-## Release automation
+## Release automation (local-only)
 
-This tap is updated automatically from the Fort release workflow (`Aureuma/fort`):
+This tap has no GitHub Actions workflows. All checks and formula updates run
+locally. Before pushing, run the gates:
 
-- builds and uploads multi-arch release archives
-- updates `Formula/fort.rb` with new version + SHA256 checksums
-- commits and pushes formula updates to this tap
+```bash
+scripts/check.sh
+```
 
-You can also trigger formula updates manually using the workflow in this repo.
+This runs: formula syntax check, formula sanity checks, checksum verification
+of every release asset against the upstream `checksums.txt`, and a clean
+`brew audit` (in an isolated temporary tap; your own taps are untouched).
+
+To update the formula for a new Fort release, run:
+
+```bash
+scripts/update-formula.sh \
+  --version vX.Y.Z \
+  --checksums https://github.com/Aureuma/fort/releases/download/vX.Y.Z/checksums.txt
+scripts/check.sh
+```
+
+Then commit `Formula/fort.rb` (and `VERSION` when it changes) and push.

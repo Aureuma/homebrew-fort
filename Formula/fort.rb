@@ -1,7 +1,6 @@
 class Fort < Formula
   desc "Policy and authentication API for Vault secret operations"
   homepage "https://github.com/Aureuma/fort"
-  version "1.5.0"
   license "AGPL-3.0-only"
 
   on_macos do
@@ -32,10 +31,10 @@ class Fort < Formula
     ["fort", "fortd", "fort-agent"].each do |name|
       binary = Dir["#{stage}/fort_*/#{name}"].first
       binary = (stage/name).to_s if binary.nil? && (stage/name).exist?
-      raise "#{name} binary not found in release archive" if binary.nil? || binary.empty?
+      raise "#{name} binary not found in release archive" if binary.blank?
 
       bin.install binary => name
-      chmod 0o755, bin/name
+      chmod 0755, bin/name
     end
   end
 
