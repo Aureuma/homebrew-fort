@@ -5,21 +5,21 @@ class Fort < Formula
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/Aureuma/fort/releases/download/v1.5.0/fort_1.5.0_darwin_arm64.tar.gz"
-      sha256 "1aa4e75df486d5843783de5c4f556414782ef2ba03bc464f9e483bc71111d525"
+      url "https://github.com/Aureuma/fort/releases/download/v1.6.0/fort_1.6.0_darwin_arm64.tar.gz"
+      sha256 "74d5b3e52f38ecf391aa5ed830885db87e001df2831c136bef58feb566118159"
     else
-      url "https://github.com/Aureuma/fort/releases/download/v1.5.0/fort_1.5.0_darwin_amd64.tar.gz"
-      sha256 "02e3a55fed3f4e5ae38f6939b9970ba93e389ccbb1c2c7be2476ea880b5c2719"
+      url "https://github.com/Aureuma/fort/releases/download/v1.6.0/fort_1.6.0_darwin_amd64.tar.gz"
+      sha256 "8f8b7ba9264b2f8f7e6f7224293c2aabee746b55d6f62cc1b0cffe093cd10288"
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/Aureuma/fort/releases/download/v1.5.0/fort_1.5.0_linux_arm64.tar.gz"
-      sha256 "518783b4bc832a3d1669987b6b3d96516d1a9899479f977a5639ed2d3ab717f9"
+      url "https://github.com/Aureuma/fort/releases/download/v1.6.0/fort_1.6.0_linux_arm64.tar.gz"
+      sha256 "1040d7d77af7dcebd4aebc6710dec32bbecb3076ad35f9255836558e0444b009"
     elsif Hardware::CPU.intel?
-      url "https://github.com/Aureuma/fort/releases/download/v1.5.0/fort_1.5.0_linux_amd64.tar.gz"
-      sha256 "3c140653c428d38ff01395f839d018c40c76ff7de3e63ec4ad56cb3f68001d78"
+      url "https://github.com/Aureuma/fort/releases/download/v1.6.0/fort_1.6.0_linux_amd64.tar.gz"
+      sha256 "48206dfea5c83e7533d6443bfbcddfbab4cc2015124b92879716a6273e3ab7d4"
     end
   end
 
